@@ -1,0 +1,20 @@
+{
+   "repos": [
+      {
+         "url": "https://github.com/Under-MRX/HellDorado-Format-YGO",
+         "repo_name": "HellDorado Custom Card",
+         "repo_path": "./repositories/HellDorado",
+		 "lflist_path" : "./lflists",
+         "should_update": true,
+         "should_read": true
+      },
+       {
+         "url": "https://github.com/Este98/Cartes-DU",
+         "repo_name": "Duel University Custom Cards",
+         "repo_path": "./repositories/Duel University",
+	 "lflist_path" : "./lflists",
+         "should_update": true,
+         "should_read": true
+      }
+	]
+}
