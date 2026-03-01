@@ -1,6 +1,5 @@
 --磁石の戦士Σ＋
 --Magnet Warrior Sigma Plus
---scripted by pyrQ
 local s,id=GetID()
 function s.initial_effect(c)
 	--While you control an EARTH monster, your opponent's monsters that can attack must attack EARTH monsters
