@@ -18,6 +18,7 @@ function s.initial_effect(c)
 	c:RegisterEffect(e2)
 end
 s.listed_series={SET_MAGNET_WARRIOR}
+s.listed_names={id}
 
 function s.thfilter(c)
 	return c:IsSetCard(SET_MAGNET_WARRIOR) and not c:IsCode(id) and c:IsLevelBelow(4) and c:IsAbleToHand()
