@@ -1,18 +1,16 @@
 --磁石の戦士Σ＋
 --Magnet Warrior Sigma Plus
 --scripted by pyrQ
-local s,id=GetID()
-function s.initial_effect(c)
-	--While you control an EARTH monster, your opponent's monsters that can attack must attack EARTH monsters
-	local e1a=Effect.CreateEffect(c)
-	e1a:SetType(EFFECT_TYPE_FIELD)
-	ea1:SetProperty(EFFECT_FLAG_CARD_TARGET)
-	e1a:SetCode(EFFECT_PATRICIAN_OF_DARKNESS)
-	e1:SetRange(LOCATION_MZONE)
-	e1:SetTargetRange(0,1)
-	e1:SetCondition(function(e)
-		return Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsAttribute,ATTRIBUTE_EARTH),
-			e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
+--If your opponent attacks, they must target an EARTH monster if possible
+local e1=Effect.CreateEffect(c)
+e1:SetType(EFFECT_TYPE_FIELD)
+e1:SetProperty(EFFECT_FLAG_PLAYER_TARGET)
+e1:SetCode(EFFECT_PATRICIAN_OF_DARKNESS)
+e1:SetRange(LOCATION_MZONE)
+e1:SetTargetRange(0,1)
+e1:SetCondition(function(e)
+	return Duel.IsExistingMatchingCard(aux.FaceupFilter(Card.IsAttribute,ATTRIBUTE_EARTH),
+		e:GetHandlerPlayer(),LOCATION_MZONE,0,1,nil)
 end)
 c:RegisterEffect(e1)
 	--Add to your hand, or Special Summon, 1 Level 4 or lower "Magnet Warrior" monster in your GY, except "Magnet Warrior Σ＋"
