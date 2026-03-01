@@ -16,4 +16,19 @@ function s.initial_effect(c)
 	local e2=e1:Clone()
 	e2:SetCode(EVENT_SPSUMMON_SUCCESS)
 	c:RegisterEffect(e2)
+	--special summon
+	local e3=Effect.CreateEffect(c)
+	e3:SetDescription(aux.Stringid(id,1))
+	e3:SetCategory(CATEGORY_SPECIAL_SUMMON)
+	e3:SetType(EFFECT_TYPE_QUICK_O)
+	e3:SetCode(EVENT_FREE_CHAIN)
+	e3:SetRange(LOCATION_MZONE)
+	e3:SetHintTiming(0,TIMING_END_PHASE)
+	e3:SetCondition(s.spcon)
+	e3:SetCost(Cost.SelfTribute)
+	e3:SetTarget(s.sptg)
+	e3:SetOperation(s.spop)
+	c:RegisterEffect(e3)
 end
+s.listed_series={SET_MAGNET_WARRIOR}
+s.listed_names={id}
