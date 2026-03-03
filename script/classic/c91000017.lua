@@ -14,7 +14,7 @@ function s.initial_effect(c)
     e1:SetRange(LOCATION_MZONE)
     e1:SetProperty(EFFECT_FLAG_CARD_TARGET)
     e1:SetCountLimit(1,id)
-    e1:SetCost(aux.dxmcostgen(2,2,nil)) -- Coût : Détacher 2 matériels
+    e1:SetCost(Cost.DetachFromSelf(2)) -- Correction ici : détache 2 matériels
     e1:SetTarget(s.sptg)
     e1:SetOperation(s.spop)
     c:RegisterEffect(e1)
