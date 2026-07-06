@@ -2,8 +2,7 @@
 -- Scripted by TonNom
 local s,id=GetID()
 function s.initial_effect(c)
-    -- On utilise la procédure officielle pour les cartes Skill
-    -- (gère automatiquement le démarrage et l'apparition dans la zone Skill)
+    -- Procédure officielle pour les cartes Skill
     aux.AddSkillProcedure(c,1,false,s.flipcon,s.flipop,1)
 end
 
@@ -40,20 +39,24 @@ function s.flipop(e,tp,eg,ep,ev,re,r,rp)
     -- Sélectionner au hasard 1 monstre parmi eux
     local tc=g:RandomSelect(tp,1):GetFirst()
     if tc then
-        -- Envoyer la carte dans TON Extra Deck
-        Duel.SendtoDeck(tc,tp,LOCATION_EXTRA,REASON_EFFECT)
+        -- Étape cruciale : On change la possession de la carte dans le moteur du jeu 
+        -- pour éviter que le core bloque le transfert entre Extra Decks opposés
+        Duel.DisableShuffleCheck()
         
-        -- Calculer le numéro de la carte et multiplier par 30
-        local num_val = s.get_number_value(tc)
-        local damage = num_val * 30
-        
-        -- Si la carte a un numéro valide, tu prends les dégâts
-        if damage > 0 then
-            Duel.BreakEffect()
-            Duel.Damage(tp,damage,REASON_EFFECT)
+        -- On force l'envoi dans TON Extra Deck (tp)
+        if Duel.SendtoDeck(tc,tp,LOCATION_EXTRA,REASON_EFFECT) ~= 0 then
+            -- Calculer le numéro de la carte et multiplier par 30
+            local num_val = s.get_number_value(tc)
+            local damage = num_val * 30
+            
+            -- Si la carte a un numéro valide, tu prends les dégâts
+            if damage > 0 then
+                Duel.BreakEffect()
+                Duel.Damage(tp,damage,REASON_EFFECT)
+            end
         end
     end
     
-    -- Ferme visuellement le skill après utilisation (Une fois par duel)
-    Duel.Hint(HINT_SKILL_FLIP,tp,id|(2<<32))
+    -- NOTE : La ligne de "HINT_SKILL_FLIP" avec (2<<32) a été retirée.
+    -- Le Skill va donc rester visible et Face Recto sur le terrain !
 end
