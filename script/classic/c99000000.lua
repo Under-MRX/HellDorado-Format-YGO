@@ -24,19 +24,16 @@ function s.flipop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SET)
     local tc=g:Select(tp,1,1,nil):GetFirst()
     if tc then
-        -- ASTUCE POUR FORCER LE JEU : 
-        -- On recrée informatiquement la carte dans ton Extra Deck et on supprime celle de l'adversaire
-        -- C'est la seule méthode infaillible pour tricher avec les règles de propriété du core YGOPro
-        local code = tc:GetCode()
+        -- L'ASTUCE : On triche avec le moteur du jeu.
+        -- On retire la carte de l'Extra Deck adverse sans déclencher d'effet (mouvement fantôme)
+        Duel.Remove(tc,POS_FACEDOWN,REASON_RULE,1-tp) 
         
-        -- 1. On supprime la carte de l'Extra Deck adverse (en la bannissant face cachée ou en la détruisant sans trigger d'effet)
-        Duel.Exile(tc, REASON_RULE)
+        -- On ré-initialise son contrôle pour dire qu'elle t'appartient à TOI (tp) pour ce duel
+        tc:SetOwner(tp)
         
-        -- 2. On génère une copie exacte de cette carte directement dans TON Extra Deck
-        local token = Duel.CreateToken(tp, code)
-        Duel.SendtoDeck(token, tp, LOCATION_EXTRA, REASON_EFFECT)
-        
-        -- Optionnel : Petit message pour confirmer l'obtention de la carte
-        Duel.Hint(HINT_CARD, tp, code)
+        -- Maintenant que le jeu pense qu'elle est à toi, SendtoDeck vers ton Extra Deck fonctionne enfin !
+        Duel.DisableShuffleCheck()
+        Duel.SendtoDeck(tc,tp,LOCATION_EXTRA,REASON_EFFECT)
     end
+end
 end
