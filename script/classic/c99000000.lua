@@ -12,9 +12,9 @@ end
 function s.flipop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SKILL_FLIP,tp,id|(1<<32))
 	Duel.Hint(HINT_CARD,tp,id)
-	--used skill flag register
-	Duel.RegisterFlagEffect(ep,id,0,0,0)
-   local g=Duel.GetMatchingGroup(s.num_filter,tp,0,LOCATION_EXTRA,nil)
+    Duel.RegisterFlagEffect(ep,id,0,0,0)
+
+ local g=Duel.GetMatchingGroup(s.num_filter,tp,0,LOCATION_EXTRA,nil)
     if #g==0 then return end
     
     -- Tu regardes (confirmes) l'Extra Deck de l'adversaire pour pouvoir choisir
@@ -24,8 +24,19 @@ function s.flipop(e,tp,eg,ep,ev,re,r,rp)
     Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SET)
     local tc=g:Select(tp,1,1,nil):GetFirst()
     if tc then
-        Duel.DisableShuffleCheck()
-        -- Envoi direct dans ton Extra Deck
-        Duel.SendtoDeck(tc,tp,LOCATION_EXTRA,REASON_EFFECT)
+        -- ASTUCE POUR FORCER LE JEU : 
+        -- On recrée informatiquement la carte dans ton Extra Deck et on supprime celle de l'adversaire
+        -- C'est la seule méthode infaillible pour tricher avec les règles de propriété du core YGOPro
+        local code = tc:GetCode()
+        
+        -- 1. On supprime la carte de l'Extra Deck adverse (en la bannissant face cachée ou en la détruisant sans trigger d'effet)
+        Duel.Exile(tc, REASON_RULE)
+        
+        -- 2. On génère une copie exacte de cette carte directement dans TON Extra Deck
+        local token = Duel.CreateToken(tp, code)
+        Duel.SendtoDeck(token, tp, LOCATION_EXTRA, REASON_EFFECT)
+        
+        -- Optionnel : Petit message pour confirmer l'obtention de la carte
+        Duel.Hint(HINT_CARD, tp, code)
     end
 end
