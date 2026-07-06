@@ -14,16 +14,18 @@ function s.flipop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_CARD,tp,id)
 	--used skill flag register
 	Duel.RegisterFlagEffect(ep,id,0,0,0)
-    local g=Duel.GetMatchingGroup(s.num_filter,tp,0,LOCATION_EXTRA,nil)
+   local g=Duel.GetMatchingGroup(s.num_filter,tp,0,LOCATION_EXTRA,nil)
     if #g==0 then return end
     
-    -- Sélection aléatoire du Numéro
-    local tc=g:RandomSelect(tp,1):GetFirst()
+    -- Tu regardes (confirmes) l'Extra Deck de l'adversaire pour pouvoir choisir
+    Duel.ConfirmCards(tp,g)
+    
+    -- TU sélectionnes manuellement 1 carte parmi les cibles valides
+    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SET)
+    local tc=g:Select(tp,1,1,nil):GetFirst()
     if tc then
         Duel.DisableShuffleCheck()
         -- Envoi direct dans ton Extra Deck
         Duel.SendtoDeck(tc,tp,LOCATION_EXTRA,REASON_EFFECT)
     end
-    
-    -- Le Skill reste face recto (on ne met pas la ligne de fermeture 2<<32)
 end
