@@ -12,28 +12,13 @@ end
 function s.flipop(e,tp,eg,ep,ev,re,r,rp)
 	Duel.Hint(HINT_SKILL_FLIP,tp,id|(1<<32))
 	Duel.Hint(HINT_CARD,tp,id)
-    Duel.RegisterFlagEffect(ep,id,0,0,0)
-
- local g=Duel.GetMatchingGroup(s.num_filter,tp,0,LOCATION_EXTRA,nil)
-    if #g==0 then return end
-    
-    -- Tu regardes (confirmes) l'Extra Deck de l'adversaire pour pouvoir choisir
-    Duel.ConfirmCards(tp,g)
-    
-    -- TU sélectionnes manuellement 1 carte parmi les cibles valides
-    Duel.Hint(HINT_SELECTMSG,tp,HINTMSG_SET)
-    local tc=g:Select(tp,1,1,nil):GetFirst()
-    if tc then
-        -- L'ASTUCE : On triche avec le moteur du jeu.
-        -- On retire la carte de l'Extra Deck adverse sans déclencher d'effet (mouvement fantôme)
-        Duel.Remove(tc,POS_FACEDOWN,REASON_RULE,1-tp) 
-        
-        -- On ré-initialise son contrôle pour dire qu'elle t'appartient à TOI (tp) pour ce duel
-        tc:SetOwner(tp)
-        
-        -- Maintenant que le jeu pense qu'elle est à toi, SendtoDeck vers ton Extra Deck fonctionne enfin !
-        Duel.DisableShuffleCheck()
-        Duel.SendtoDeck(tc,tp,LOCATION_EXTRA,REASON_EFFECT)
-    end
-end
+	--used skill flag register
+	Duel.RegisterFlagEffect(ep,id,0,0,0)
+	local c=e:GetHandler()
+	local g=Duel.SelectMatchingCard(tp,Card.IsAbleToDeck,tp,LOCATION_HAND,0,1,1,nil)
+	if #g>0 and Duel.SendtoDeck(g,nil,1,REASON_EFFECT)~=0 then
+		Duel.ShuffleDeck(tp)
+		Duel.BreakEffect()
+		Duel.Draw(tp,1,REASON_EFFECT)
+	end
 end
