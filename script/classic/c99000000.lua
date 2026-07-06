@@ -11,13 +11,14 @@ function s.num_filter(c)
     return c:IsSetCard(0x48)
 end
 
--- Condition : S'active uniquement durant ton tour
+-- Condition de base : Permet d'ouvrir le menu du Skill pendant ton tour
 function s.flipcon(e,tp,eg,ep,ev,re,r,rp)
     if not aux.CanActivateSkill(tp) then return false end
     if Duel.GetTurnPlayer()~=tp then return false end
     
-    -- Vérifie s'il y a au moins 1 monstre Numéro chez l'adversaire
-    return Duel.IsExistingMatchingCard(s.num_filter,tp,0,LOCATION_EXTRA,1,nil)
+    -- Le Skill s'allume si l'adversaire a un Numéro ET que tu n'as pas encore activé l'effet ce duel
+    return Duel.GetFlagEffect(tp,id)==0 
+        and Duel.IsExistingMatchingCard(s.num_filter,tp,0,LOCATION_EXTRA,1,nil)
 end
 
 -- Fonction pour extraire le numéro du nom de la carte (ex: "Number 39" -> 39)
@@ -28,6 +29,12 @@ end
 
 -- L'effet du Skill
 function s.flipop(e,tp,eg,ep,ev,re,r,rp)
+    -- Demander confirmation au joueur ("Voulez-vous activer l'effet de ce Skill ?")
+    if not Duel.SelectYesNo(tp,aux.Stringid(id,0)) then return end
+    
+    -- Si le joueur a dit OUI, on verrouille le Skill pour le reste du Duel
+    Duel.RegisterFlagEffect(tp,id,0,0,0)
+    
     -- Animation visuelle de l'activation
     Duel.Hint(HINT_SKILL_FLIP,tp,id|(1<<32))
     Duel.Hint(HINT_CARD,tp,id)
@@ -39,11 +46,9 @@ function s.flipop(e,tp,eg,ep,ev,re,r,rp)
     -- Sélectionner au hasard 1 monstre parmi eux
     local tc=g:RandomSelect(tp,1):GetFirst()
     if tc then
-        -- Étape cruciale : On change la possession de la carte dans le moteur du jeu 
-        -- pour éviter que le core bloque le transfert entre Extra Decks opposés
         Duel.DisableShuffleCheck()
         
-        -- On force l'envoi dans TON Extra Deck (tp)
+        -- On force l'envoi dans TON Extra Deck
         if Duel.SendtoDeck(tc,tp,LOCATION_EXTRA,REASON_EFFECT) ~= 0 then
             -- Calculer le numéro de la carte et multiplier par 30
             local num_val = s.get_number_value(tc)
@@ -57,6 +62,5 @@ function s.flipop(e,tp,eg,ep,ev,re,r,rp)
         end
     end
     
-    -- NOTE : La ligne de "HINT_SKILL_FLIP" avec (2<<32) a été retirée.
-    -- Le Skill va donc rester visible et Face Recto sur le terrain !
+    -- Le Skill reste face recto (pas de HINT_SKILL_FLIP avec 2<<32)
 end
