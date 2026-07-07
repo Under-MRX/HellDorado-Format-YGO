@@ -21,7 +21,6 @@ function s.flipcon(e,tp,eg,ep,ev,re,r,rp)
     if c:IsFacedown() then return true end
     
     -- ÉTAPE 2 : Si le Skill est déjà face recto, on peut faire l'effet (1 fois par duel)
-    -- Optionnel : j'ai ajouté une vérification pour s'assurer que tu as bien un "Numéro" sur ton terrain pour pouvoir l'activer
     return Duel.GetFlagEffect(tp,id)==0 
         and Duel.IsExistingMatchingCard(s.num_control_filter,tp,LOCATION_MZONE,0,1,nil)
 end
@@ -32,7 +31,7 @@ function s.flipop(e,tp,eg,ep,ev,re,r,rp)
     -- Cas 1 : Le Skill est face verso -> On le met juste face recto
     if c:IsFacedown() then
         Duel.Hint(HINT_SKILL_FLIP,tp,id|(1<<32))
-        Duel.Hint(HIND_CARD,tp,id)
+        Duel.Hint(HINT_CARD,tp,id)
         return
     end
     
@@ -42,19 +41,18 @@ function s.flipop(e,tp,eg,ep,ev,re,r,rp)
     -- On verrouille le Skill pour le reste du duel
     Duel.RegisterFlagEffect(tp,id,0,0,0)
     
-    -- Animation visuelle de l'activation de l'effet
+    -- Animation visuelle de l'activation de l'effet (Correction de la faute de frappe ici !)
     Duel.Hint(HINT_CARD,tp,id)
     
     -- CRÉATION DE LA PROTECTION (Effet persistant sur le Terrain)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetCode(EFFECT_INDESTRUCTIVABLE_BATTLE)
-    e1:SetTargetRange(LOCATION_MZONE,0) -- S'applique sur tes monstres
+    e1:SetTargetRange(LOCATION_MZONE,0) -- S'apply sur tes monstres
     e1:SetTarget(s.protection_tg)       -- Uniquement les monstres "Numéro"
     e1:SetValue(s.battle_value)         -- Sauf contre un autre "Numéro"
     
     -- Durée de l'effet : Jusqu'à la fin du prochain tour de l'adversaire
-    -- Si c'est actuellement ton tour, le prochain tour de l'adversaire est le tour actuel + 1 (donc 1 cycle complet de son tour)
     e1:SetReset(RESET_PHASE+PHASE_END+RESET_OPPO_TURN,1)
     Duel.RegisterEffect(e1,tp)
 end
@@ -64,7 +62,7 @@ function s.protection_tg(e,c)
     return c:IsSetCard(0x48)
 end
 
--- Règle de combat : Immunisé contre la destruction, SAUF si le monstre attaquant (c) est aussi un "Numéro"
+-- Règle de combat : Immunisé contre la destruction, SAUF si l'attaquant (c) est aussi un "Numéro"
 function s.battle_value(e,c)
     return not c:IsSetCard(0x48)
 end
