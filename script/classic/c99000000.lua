@@ -28,10 +28,8 @@ end
 function s.flipop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     
-    -- Cas 1 : Le Skill est face verso -> On le met juste face recto
+    -- Cas 1 : Le Skill est face verso -> On le met juste face recto (Géré par la procedure)
     if c:IsFacedown() then
-        Duel.Hint(HINT_SKILL_FLIP,tp,id|(1<<32))
-        Duel.Hint(HINT_CARD,tp,id)
         return
     end
     
@@ -41,14 +39,14 @@ function s.flipop(e,tp,eg,ep,ev,re,r,rp)
     -- On verrouille le Skill pour le reste du duel
     Duel.RegisterFlagEffect(tp,id,0,0,0)
     
-    -- Animation visuelle de l'activation de l'effet (Correction de la faute de frappe ici !)
+    -- Annonce l'activation du skill dans le journal de duel
     Duel.Hint(HINT_CARD,tp,id)
     
     -- CRÉATION DE LA PROTECTION (Effet persistant sur le Terrain)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetCode(EFFECT_INDESTRUCTIVABLE_BATTLE)
-    e1:SetTargetRange(LOCATION_MZONE,0) -- S'apply sur tes monstres
+    e1:SetTargetRange(LOCATION_MZONE,0) -- S'applique sur tes monstres
     e1:SetTarget(s.protection_tg)       -- Uniquement les monstres "Numéro"
     e1:SetValue(s.battle_value)         -- Sauf contre un autre "Numéro"
     
