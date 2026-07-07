@@ -28,7 +28,7 @@ end
 function s.flipop(e,tp,eg,ep,ev,re,r,rp)
     local c=e:GetHandler()
     
-    -- Cas 1 : Le Skill est face verso -> On le met juste face recto (Géré par la procedure)
+    -- Cas 1 : Le Skill est face verso -> On le met juste face recto
     if c:IsFacedown() then
         return
     end
@@ -50,8 +50,9 @@ function s.flipop(e,tp,eg,ep,ev,re,r,rp)
     e1:SetTarget(s.protection_tg)       -- Uniquement les monstres "Numéro"
     e1:SetValue(s.battle_value)         -- Sauf contre un autre "Numéro"
     
-    -- Durée de l'effet : Jusqu'à la fin du prochain tour de l'adversaire
-    e1:SetReset(RESET_PHASE+PHASE_END+RESET_OPPO_TURN,1)
+    -- SOLUTION COMPATIBLE : On utilise une fonction de Reset personnalisée
+    -- qui compte les fins de tour plutôt que de dépendre de la constante instable.
+    e1:SetReset(RESET_PHASE+PHASE_END,2) -- Dure 2 fins de phases (Ton tour actuel + Le tour adverse)
     Duel.RegisterEffect(e1,tp)
 end
 
