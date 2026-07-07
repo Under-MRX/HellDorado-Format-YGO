@@ -24,7 +24,9 @@ function s.flipop(e,tp,eg,ep,ev,re,r,rp)
     
     e1:SetTarget(s.num_target) 
     
-    e1:SetValue(aux.NOT(aux.TargetBoolFunction(Card.IsSetCard,SET_NUMBER)))
+	e1:SetValue(function(e,tg)
+        return not tg:IsSetCard(SET_NUMBER)
+    end)
     
     e1:SetReset(RESET_PHASE+PHASE_END,2)
     
