@@ -18,10 +18,9 @@ function s.flipop(e,tp,eg,ep,ev,re,r,rp)
     local e1=Effect.CreateEffect(c)
     e1:SetType(EFFECT_TYPE_FIELD)
     e1:SetCode(EFFECT_INDESTRUCTIVABLE_BATTLE)
-    e1:SetTargetRange(LOCATION_MZONE,0) -- Cible ton terrain
-    e1:SetTarget(s.protection_tg)       -- Uniquement tes monstres "Numéro"
-    e1:SetValue(s.battle_value)         -- Sauf contre un autre "Numéro"
-    
+    e1:SetTargetRange(LOCATION_MZONE,0) 
+	e1:SetValue(aux.NOT(aux.TargetBoolFunction(Card.IsSetCard,SET_NUMBER)))
+	c:RegisterEffect(e1)
     -- CORRECTION ERREUR PARAMETER 2 : On évite RESET_OPPO_TURN. 
     -- 2 End Phases = Ton tour actuel + Le tour complet de l'adversaire.
     e1:SetReset(RESET_PHASE+PHASE_END,2)
